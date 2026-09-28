@@ -14,7 +14,7 @@ namespace ClassDemoDBConnection
 
         public DBWorker() { }
 
-        public void ConnectToDB()
+        private void ConnectToDB()
         {
             // connection string
             string connString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=2semDemo;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
@@ -25,7 +25,7 @@ namespace ClassDemoDBConnection
         }
 
 
-        public void DisconnectFromDB()
+        private void DisconnectFromDB()
         {
             _conn.Close();
         }
@@ -33,24 +33,31 @@ namespace ClassDemoDBConnection
 
         public bool CheckUser(string user, string pass)
         {
+            bool returnOK = false;
+            
+            ConnectToDB();
+
             String sql = $"SELECT * FROM LoginDemo WHERE username='{user}' AND password='{pass}'";
             SqlCommand cmd = new SqlCommand(sql, _conn);
 
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.Read())
             {
-                return true;
+                returnOK = true;
             }
-            
-            return false;
+
+            DisconnectFromDB();
+
+            return returnOK;
         }
 
         private const String sqlCheck2 = $"SELECT * FROM LoginDemo WHERE username=@UserName AND password=@Password";
         public bool CheckUser2(string user, string pass)
         {
-            DisconnectFromDB();
+            bool returnOK = false;
+
             ConnectToDB();
-            
+
             SqlCommand cmd = new SqlCommand(sqlCheck2   , _conn);
             cmd.Parameters.AddWithValue("@UserName", user);
             cmd.Parameters.AddWithValue("@Password", pass);
@@ -58,10 +65,12 @@ namespace ClassDemoDBConnection
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.Read())
             {
-                return true;
+                returnOK = true;
             }
 
-            return false;
+            DisconnectFromDB();
+
+            return returnOK;
         }
     }
 }

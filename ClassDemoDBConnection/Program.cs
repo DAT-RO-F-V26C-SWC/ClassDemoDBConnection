@@ -4,7 +4,6 @@ using ClassDemoDBConnection;
 Console.WriteLine("Hello, World!");
 
 DBWorker dbWorker = new DBWorker();
-dbWorker.ConnectToDB();
 
 if (dbWorker.CheckUser("Peter", "nonsen' OR '1'='1"))
 {
@@ -24,4 +23,3 @@ else
     Console.WriteLine("Prøv igen");
 }
 
-dbWorker.DisconnectFromDB();
